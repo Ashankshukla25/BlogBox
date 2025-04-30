@@ -96,7 +96,6 @@ app.get('/new-blog', (req, res) => {
 app.get('/dashboard', (req, res) => {
   res.redirect('/');  // Redirect to explore page
 });
-
 // Then register the routers
 app.use('/blogs', blogRoutes);
 app.use('/auth', authRoutes);
