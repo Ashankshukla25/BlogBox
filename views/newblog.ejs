@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create New Blog • BlogBox</title>
+  <%- include('partials/signupstyle') %>
+  <style>
+    /* Main container */
+    .container {
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 0 20px;
+    }
+    /* Form styles */
+    .blog-form {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 30px;
+      margin-top: 20px;
+    }
+    .form-title {
+      font-size: 1.8rem;
+      color: #333;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #555;
+    }
+    input[type="text"],
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 1rem;
+    }
+    textarea {
+      min-height: 250px;
+      resize: vertical;
+    }
+    .btn-group {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
+    }
+    button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 4px;
+      font-weight: 500;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .btn-submit {
+      background: #0056c8;
+      color: white;
+    }
+    .btn-submit:hover {
+      background: #0041a1;
+    }
+    .btn-cancel {
+      background: #f5f5f5;
+      color: #333;
+    }
+    .btn-cancel:hover {
+      background: #e5e5e5;
+    }
+    /* Feedback message */
+    #message {
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 4px;
+      font-weight: 500;
+      display: none;
+    }
+    .error-message {
+      background: #ffebee;
+      color: #c62828;
+    }
+    .success-message {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+    /* Navigation */
+    .nav-links {
+      display: flex;
+      justify-content: space-between;
+      margin: 20px 0;
+    }
+    .back-link {
+      color: #0056c8;
+      text-decoration: none;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+    .back-arrow {
+      margin-right: 5px;
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav>
+    <div class="nav">
+      <div class="logo">
+        <img src="/assets/BlogBox logo_light_theme.svg" alt="BlogBox" />
+      </div>
+      <div class="themechanger">
+        <img src="/assets/moon-svgrepo-com.svg" alt="Theme Switch" />
+      </div>
+    </div>
+  </nav>
+  
+  <main>
+    <div class="container">
+      <div class="nav-links">
+        <a href="/" class="back-link">
+          <span class="back-arrow">←</span> Back to Explore
+        </a>
+      </div>
+      
+      <div class="blog-form">
+        <h1 class="form-title">Create New Blog</h1>
+        
+        <form id="newBlogForm">
+          <div class="form-group">
+            <label for="title">Title</label>
+            <input
+              type="text"
+              id="title"
+              name="title"
+              required
+              placeholder="Enter a catchy title"
+            />
+          </div>
+          
+          <div class="form-group">
+            <label for="description">Description</label>
+            <input
+              type="text"
+              id="description"
+              name="description"
+              required
+              placeholder="Brief summary of your blog"
+            />
+          </div>
+          
+          <div class="form-group">
+            <label for="body">Content</label>
+            <textarea
+              id="body"
+              name="body"
+              required
+              placeholder="Write your blog content here..."
+            ></textarea>
+          </div>
+          
+          <div class="btn-group">
+            <button
+              type="button"
+              class="btn-cancel"
+              onclick="window.location.href='/'"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="btn-submit">Submit</button>
+          </div>
+          
+          <div id="message"></div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Please log in to create blogs');
+        window.location.href = '/signin';
+      }
+    });
+
+    document.getElementById('newBlogForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      // Gather form values
+      const title = document.getElementById('title').value;
+      const description = document.getElementById('description').value;
+      const body = document.getElementById('body').value;
+      const token = localStorage.getItem('token');
+
+      // Get form elements
+      const submitButton = document.querySelector('.btn-submit');
+      const cancelButton = document.querySelector('.btn-cancel');
+      
+      // Show loading state
+      submitButton.disabled = true;
+      cancelButton.disabled = true;
+      const originalButtonText = submitButton.innerText;
+      submitButton.innerText = 'Submitting...';
+
+      // Prepare feedback element
+      const msgEl = document.getElementById('message');
+      msgEl.style.display = 'block';
+      msgEl.className = '';
+      
+      try {
+        // Check if user is logged in
+        if (!token) {
+          throw new Error('Please log in to create a blog');
+        }
+        
+        // Make sure fetch URL matches the route
+        const res = await fetch('/blogs', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify({ title, description, body })
+        });
+        const data = await res.json();
+        
+        if (res.ok) {
+          msgEl.classList.add('success-message');
+          msgEl.innerText = 'Blog created successfully!';
+          // Redirect to the explore page after a short delay:
+          setTimeout(() => {
+            window.location.href = "/"; // Redirect to explore page
+          }, 1000);
+        } else {
+          msgEl.classList.add('error-message');
+          msgEl.innerText = data.message || 'Failed to create blog.';
+          // Reset form state for retry
+          submitButton.disabled = false;
+          cancelButton.disabled = false;
+          submitButton.innerText = originalButtonText;
+        }
+      } catch (err) {
+        msgEl.classList.add('error-message');
+        msgEl.innerText = 'Error: ' + err.message;
+        // Reset form state
+        submitButton.disabled = false;
+        cancelButton.disabled = false;
+        submitButton.innerText = originalButtonText;
+      }
+    });
+
+    // Theme switching functionality
+    document.querySelector('.themechanger').addEventListener('click', () => {
+      const body = document.body;
+      const themeIcon = document.querySelector('.themechanger img');
+      
+      // Toggle dark theme class
+      body.classList.toggle('dark-theme');
+      
+      // Update icon based on theme
+      const isDarkTheme = body.classList.contains('dark-theme');
+      
+      // Save preference to localStorage
+      localStorage.setItem('darkTheme', isDarkTheme);
+      
+      // Change icon based on theme (assuming you have both icons)
+      if (isDarkTheme) {
+        themeIcon.src = "/assets/sun-svgrepo-com.svg";
+      } else {
+        themeIcon.src = "/assets/moon-svgrepo-com.svg";
+      }
+    });
+
+    // Apply saved theme preference on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      const darkTheme = localStorage.getItem('darkTheme') === 'true';
+      if (darkTheme) {
+        document.body.classList.add('dark-theme');
+        document.querySelector('.themechanger img').src = "/assets/sun-svgrepo-com.svg";
+      }
+    });
+  </script>
+</body>
+</html>

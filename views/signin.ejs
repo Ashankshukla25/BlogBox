@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <%- include('partials/signupstyle') %>
+  </head>
+  <body>
+    <nav>
+      <div class="nav">
+        <div class="logo">
+          <img src="/assets/BlogBox logo_light_theme.svg" alt="" />
+        </div>
+        <div class="themechanger">
+          <img src="../assets/moon-svgrepo-com.svg" alt="" />
+        </div>
+      </div>
+    </nav>
+    <main>
+      <div class="container">
+        <h2>SignIn to your account</h2>
+        <form id="signinForm">
+          <input
+            type="text"
+            id="credential"
+            placeholder="Email or Username"
+            required
+          />
+          <input
+            type="password"
+            id="password"
+            placeholder="Password"
+            required
+          />
+          <button type="submit">Sign In</button>
+        </form>
+        <div class="link">
+          New user? <a href="/signup">Sign Up</a>
+        </div>
+        <div id="message"></div>
+      </div>
+    </main>
+
+    <script>
+      document.getElementById("signinForm").addEventListener("submit", async(e) => {
+          e.preventDefault();
+
+          const credential = document.getElementById("credential").value;
+          const password = document.getElementById("password").value;
+          
+          try {
+            const res = await fetch('/auth/signin', {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({
+                credential, password
+              })
+            });
+            
+            const data = await res.json();
+            
+            // Update message based on response
+            const messageElem = document.getElementById("message");
+            if (res.ok) {
+              messageElem.style.color = "green";
+              messageElem.innerText = data.message || "Login successful!";
+              
+              // Store the token and user info in localStorage
+              localStorage.setItem('token', data.token);
+              localStorage.setItem('firstName', data.user.firstname || data.user.username);
+              
+              // Redirect after successful login
+              setTimeout(() => {
+                window.location.href = "/"; 
+              }, 1500);
+            } else {
+              messageElem.style.color = "red";
+              messageElem.innerText = data.message || "Login failed!";
+            }
+          } catch (error) {
+            document.getElementById("message").style.color = "red";
+            document.getElementById("message").innerText = "Error: " + error.message;
+          }
+      });
+    </script>
+  </body>
+</html>
