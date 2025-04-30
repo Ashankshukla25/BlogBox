@@ -93,7 +93,6 @@ BlogBox/
 
 ## Screenshots
 
-## Screenshots
 
 ### Explore Page
 ![Explore Page](Screenshots/Blogexplore.png)
