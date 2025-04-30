@@ -96,24 +96,24 @@ BlogBox/
 ## Screenshots
 
 ### Explore Page
-![Explore Page](screenshots/Blogexplore.png)
+![Explore Page](Screenshots/Blogexplore.png)
 *Browse through all available blog posts on the responsive explore page*
 
 ### Blog Detail View
-![Blog Detail](screenshots/Blogdetail.png)
+![Blog Detail](Screenshots/Blogdetail.png)
 *Read the full content of blogs with author information and publication date*
 
 ### Create New Blog
-![Create Blog](screenshots/create-blog.png)
+![Create Blog](Screenshots/create-blog.png)
 *Write and publish new blog posts with a clean, intuitive interface*
 
 ### User Authentication
-![Authentication](screenshots/blogLoginpage.png)
+![Authentication](Screenshots/blogLoginpage.png)
 *Secure signup and signin functionality with form validation*
 
 ### Mongo DB
-![Database](screenshots/MongoDbblogs.png)
-![Database](screenshots/Mongodbusers.png)
+![Database](Screenshots/MongoDbblogs.png)
+![Database](Screenshots/Mongodbusers.png)
 *Database view*
 
 ## License
