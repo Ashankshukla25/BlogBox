@@ -103,7 +103,7 @@ BlogBox/
 *Read the full content of blogs with author information and publication date*
 
 ### Create New Blog
-![Create Blog](Screenshots/create-blog.png)
+![Create Blog](Screenshots/createblog.png)
 *Write and publish new blog posts with a clean, intuitive interface*
 
 ### User Authentication
